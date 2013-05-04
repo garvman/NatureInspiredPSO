@@ -5,6 +5,11 @@ import java.util.Random;
 
 public class Particle {
 
+	
+	/*
+	
+	*/
+	
 	//assigned values for each of the functions this PSO will test on
 	//therefore a user can just type the corresponding number instead of the 
 	//name of the function
@@ -24,88 +29,122 @@ public class Particle {
 	public final int FIPS = 0;
 	public final int STD = 1;
 	
-	public int NUM_DIMENSIONS;
-	public int FUNCTION_NUMBER;
-	public int NT_NUMBER;
-	public int NIS_NUMBER;
-	public boolean PARTICLE_INCLUDED;
+	int particleID;
+	double pBest;
+	double nBest;
 	
-	public int particleID;
-	public double [] velocity;
-	public double pPosValue;
-	public double [] position;
-	public double pBest;
-	public double [] pBestLocation;
-	public double nBest;
+	public int [] neighborhood; 
+	public double [] velocity;	
+	public double [] position;	
+	public double [] pBestLocation;	
 	public double [] nBestLocation;
 	
 	
-	//neighborhood for this particle and a vector containing index of other 
-	//particle neighborhoods this particle belongs to
-	//the size of the neighborhood will depend on which neighborhood is implemented
-	public Particle [] neighborhood; 
+	
 	
 	private Random rand = new Random();
-
+	
 	
 	//int neighborhoodInfluence;
 
 	//Particle Constructor
 	//velocity array to keep track of velocity
 	//int pBest to keep track particles best
-	public Particle(int nDim, int fnN ,int nT, int nI,int id, boolean pInc){
+	public Particle(int NUM_DIMENSIONS, int id){
 	
-		NUM_DIMENSIONS = nDim;
-		FUNCTION_NUMBER = fnN;
-		NT_NUMBER = nT;
-		NIS_NUMBER = nI;
-		PARTICLE_INCLUDED = pInc;
+		//neighborhood for this particle 
+		//the size of the neighborhood will depend on which neighborhood is implemented
 		
 		particleID = id;
+		velocity = new double [NUM_DIMENSIONS];		
+		position = new double [NUM_DIMENSIONS];		
+		pBestLocation = new double [NUM_DIMENSIONS];		
+		nBestLocation = new double [NUM_DIMENSIONS];		
 				
-		velocity = new double [NUM_DIMENSIONS];
+		
 		//position in N dimensional space and randomize it
-		//pPosValue = double.MAX_VALUE;
-		position = new double [NUM_DIMENSIONS];
+		//pPosValue = double.MAX_VALUE;		
 		for(int i =0; i< NUM_DIMENSIONS; i++){
 		
 			position[i] = rand.nextDouble();
 			
-		}
-		
-		
-		///pBest = double.MAX_VALUE; 
-		pBestLocation = new double [NUM_DIMENSIONS];
-		
-		//bests for the neighborhood that is "centered" around this particle
-		//only applies to certain neighborhood influences 
-		//nBest = double.MAX_VALUE; 
-		nBestLocation = new double [NUM_DIMENSIONS];
-	
+		}		
+			
 	}
 	
 	//depending on the neighborhood set the neighborhood for 
 	//a given particle
-	public void setNeighborhood(){
+	public void setNeighborhood(int NT_NUMBER, int NUM_PARTICLES, boolean PARTICLE_INCLUDED){
 		
-		if(NT_NUMBER == G_BEST){
+		if((NT_NUMBER == G_BEST) &! PARTICLE_INCLUDED){
 			
 		
 		}
-		else if(NT_NUMBER == L_BEST){
+		else if((NT_NUMBER == G_BEST) && PARTICLE_INCLUDED){
+		
+			
 		
 		}
-		else if(NT_NUMBER == VON_NEUMANN){
+		else if((NT_NUMBER == L_BEST) &! PARTICLE_INCLUDED){
+			neighborhood = new int [2];
+			
+			if(particleID == 0){
+				neighborhood[0] = NUM_PARTICLES-1;
+				neighborhood[1] = particleID+1;				
+			}
+			else if(particleID == NUM_PARTICLES-1){
+				neighborhood[0] = 0;
+				neighborhood[1] = particleID-1;				
+			}
+			else {
+				neighborhood[0] = particleID+1;
+				neighborhood[1] = particleID-1;
+				
+			}
+		}
+		else if((NT_NUMBER == L_BEST) && PARTICLE_INCLUDED){
+			neighborhood = new int [3];
+			neighborhood[0] = particleID;
+			
+			if(particleID == 0){
+				neighborhood[1] = NUM_PARTICLES-1;
+				neighborhood[2] = particleID+1;				
+			}
+			else if(particleID == NUM_PARTICLES-1){
+				neighborhood[1] = 0;
+				neighborhood[2] = particleID-1;				
+			}
+			else {
+				neighborhood[1] = particleID+1;
+				neighborhood[2] = particleID-1;
+				
+			}
+		}
+		else if((NT_NUMBER == VON_NEUMANN) &! PARTICLE_INCLUDED){
 		
 		
 		}
-		else if (
+		else if((NT_NUMBER == VON_NEUMANN) && PARTICLE_INCLUDED){
+		
+		
+		}
+		else if ((NT_NUMBER == RANDOM_NEIGHBORHOOD)&! PARTICLE_INCLUDED){
+			
+		
+		}
+		else if ((NT_NUMBER == RANDOM_NEIGHBORHOOD)&& PARTICLE_INCLUDED){
+			
+		
+		}
 	
 	
 	}
 	
+	
+	
+	
 	//depending on the global and local best values and neighborhood
-	public void updateVelocity(){
+	public void updateVelocity(int NIS_NUMBER, boolean PARTICLE_INCLUDED){
 		
 		//update particle velocity depending on the influence strategy and the 
 		//whether the particle is included or not
@@ -144,7 +183,7 @@ public class Particle {
 	//update the position of the particle
 	public void updatePosition(){
 		
-		for(int i = 0;i < NUM_DIMENSIONS; i++){
+		for(int i = 0;i < position.length-1; i++){
 		
 			position[i] = position[i] + velocity[i];
 		
@@ -154,7 +193,7 @@ public class Particle {
 	}
 	
 	//calculate value for position
-	public void valueForPosition(){
+	public void valueForPosition(int FUNCTION_NUMBER){
 	
 		double ret = 0.0;
 	
@@ -178,7 +217,7 @@ public class Particle {
 	}
 	
 	private double evalSphere (int index){
-		if(index == (NUM_DIMENSIONS-1))
+		if(index == (position.length -1))
 			return position[index]*position[index];
 			
 		return (position[index]*position[index] + evalSphere(index++));
@@ -186,7 +225,7 @@ public class Particle {
 	}
 	
 	private double evalRosenbrock (int i){
-		if(i == (NUM_DIMENSIONS-2))
+		if(i == (position.length -2))
 			return 100.0*((position[i]*position[i]-position[i+1])*
 					(position[i]*position[i]-position[i+1]) + ((position[i]-1)*
 					(position[i]-1)));
@@ -212,7 +251,7 @@ public class Particle {
 	}
 	
 	private double evalRastrigin(int i){
-		if(i == (NUM_DIMENSIONS-1))
+		if(i == (position.length -1))
 			return position[i]*position[i] - 10.0*Math.cos(2.0*Math.PI*position[i]) + 10.0;
 			
 		return ((position[i]*position[i] - 10.0*Math.cos(2.0*Math.PI*position[i]) + 10.0) + 
@@ -221,7 +260,7 @@ public class Particle {
 	
 	}
 	private double sumSquares(int index){
-		if(index == (NUM_DIMENSIONS -1))
+		if(index == (position.length -1))
 			return position[index]*position[index];
 			
 		return (position[index]*position[index] + sumSquares(index + 1));
@@ -231,7 +270,7 @@ public class Particle {
 	
 	private double productCos (int index){
 	
-		if(index == (NUM_DIMENSIONS -1))
+		if(index == (position.length -1))
 			return Math.cos(position[index]/Math.sqrt(index));
 			
 		return Math.cos(position[index]/Math.sqrt(index))*productCos(index++);
@@ -239,7 +278,7 @@ public class Particle {
 	}
 	
 	private double sumCos (int index){
-		if(index == (NUM_DIMENSIONS -1))
+		if(index == (position.length -1))
 			return Math.cos(2.0*Math.PI*position[index]);
 	
 		return Math.cos(2.0*Math.PI*position[index]) + sumCos(index++);
