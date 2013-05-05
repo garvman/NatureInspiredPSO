@@ -182,11 +182,13 @@ public class Particle {
 	
 	//update the position of the particle
 	public void updatePosition(){
-		
-		for(int i = 0;i < position.length-1; i++){
+		//System.out.println("inside update pos" );
+		System.out.print("position: ");
+		for(int i = 0; i < position.length; i++){
 		
 			position[i] = position[i] + velocity[i];
-		
+			
+			System.out.print(position[i] + ", ");
 		}
 		
 	
@@ -213,14 +215,16 @@ public class Particle {
 			ret = evalRastrigin(0);		
 		}
 		
-	
+		System.out.println(" Value: " + ret);
 	}
 	
 	private double evalSphere (int index){
-		if(index == (position.length -1))
+		if(index == (position.length-1))
 			return position[index]*position[index];
 			
-		return (position[index]*position[index] + evalSphere(index++));
+		index++;	
+		//System.out.println(index);	
+		return (position[index]*position[index] + evalSphere(index));
 	
 	}
 	
@@ -255,7 +259,7 @@ public class Particle {
 			return position[i]*position[i] - 10.0*Math.cos(2.0*Math.PI*position[i]) + 10.0;
 			
 		return ((position[i]*position[i] - 10.0*Math.cos(2.0*Math.PI*position[i]) + 10.0) + 
-				evalRastrigin(i++));
+				evalRastrigin(i+1));
 		
 	
 	}
@@ -273,7 +277,7 @@ public class Particle {
 		if(index == (position.length -1))
 			return Math.cos(position[index]/Math.sqrt(index));
 			
-		return Math.cos(position[index]/Math.sqrt(index))*productCos(index++);
+		return Math.cos(position[index]/Math.sqrt(index))*productCos(index+1);
 	
 	}
 	
@@ -281,7 +285,7 @@ public class Particle {
 		if(index == (position.length -1))
 			return Math.cos(2.0*Math.PI*position[index]);
 	
-		return Math.cos(2.0*Math.PI*position[index]) + sumCos(index++);
+		return Math.cos(2.0*Math.PI*position[index]) + sumCos(index+1);
 	}
 	
 	

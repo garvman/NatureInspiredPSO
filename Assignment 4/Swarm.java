@@ -22,7 +22,7 @@ public class Swarm {
 	
 		Swarm swarm = new Swarm ();
 		swarm.initSwarm();
-		//swarm.runSwarm();
+		swarm.runSwarm();
 
 
 	}
@@ -57,10 +57,11 @@ public class Swarm {
 		for(int j = 0; j < NUM_ITERATIONS; j++){
 			for(int i = 0; i < NUM_PARTICLES; i++){
 				Particle p = swarm[i];
+				p.updateVelocity(NIS_NUMBER, PARTICLE_INCLUDED);
 				p.updatePosition();
 				p.valueForPosition(FUNCTION_NUMBER);
 				p.updateBests();
-				p.updateVelocity(NIS_NUMBER, PARTICLE_INCLUDED);		
+						
 		
 			}
 		}
