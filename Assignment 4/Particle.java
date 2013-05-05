@@ -30,6 +30,7 @@ public class Particle {
 	public final int STD = 1;
 	
 	int particleID;
+	double pPosVal; 
 	double pBest;
 	double nBest;
 	
@@ -56,10 +57,13 @@ public class Particle {
 		//the size of the neighborhood will depend on which neighborhood is implemented
 		
 		particleID = id;
+		int sign;
 		velocity = new double [NUM_DIMENSIONS];		
 		position = new double [NUM_DIMENSIONS];		
 		pBestLocation = new double [NUM_DIMENSIONS];		
-		nBestLocation = new double [NUM_DIMENSIONS];		
+		nBestLocation = new double [NUM_DIMENSIONS];	
+		pBest = Double.MAX_VALUE;
+		nBest = Double.MAX_VALUE;
 				
 		
 		//position in N dimensional space and randomize it
@@ -67,6 +71,12 @@ public class Particle {
 		for(int i =0; i< NUM_DIMENSIONS; i++){
 		
 			position[i] = rand.nextDouble();
+			if(rand.nextDouble()<0.5)
+				sign = -1;
+			else 
+				sign = 1;
+				
+			velocity[i] = 2*sign*rand.nextDouble();
 			
 		}		
 			
@@ -172,13 +182,7 @@ public class Particle {
 	
 	}
 	
-	//update bests according to neighborhood scheme
-	//if pBest is better than neighborhood best then set as nBest (if applicable)
-	public void updateBests(){
 	
-	
-	
-	}
 	
 	//update the position of the particle
 	public void updatePosition(){
@@ -216,6 +220,7 @@ public class Particle {
 		}
 		
 		System.out.println(" Value: " + ret);
+		pPosVal = ret;
 	}
 	
 	private double evalSphere (int index){
@@ -271,7 +276,7 @@ public class Particle {
 	
 	
 	}
-	
+	//need to look at Griewank again to see what happens when index is 0, undefined 
 	private double productCos (int index){
 	
 		if(index == (position.length -1))

@@ -5,7 +5,9 @@ import java.util.*;
 public class Swarm {
 
 	
-	Particle [] swarm;
+	public Particle [] swarm;
+	public double gBest;
+	public double [] gBestLocation;
 	
 	public static int NUM_DIMENSIONS;
 	public static int NUM_PARTICLES;
@@ -31,9 +33,9 @@ public class Swarm {
 	//swarm constructor
 	public Swarm(){
 	
-		double gBest; 
+		gBest = Double.MAX_VALUE; 
 		swarm = new Particle [NUM_PARTICLES];
-		double [] gBestLocation = new double [NUM_DIMENSIONS];
+		gBestLocation = new double [NUM_DIMENSIONS];
 	
 	}
 
@@ -44,7 +46,8 @@ public class Swarm {
 		
 		for(int i = 0; i < NUM_PARTICLES; i++){
 			Particle p = new Particle(NUM_DIMENSIONS, i);
-			p.setNeighborhood(NT_NUMBER, NUM_PARTICLES, PARTICLE_INCLUDED);
+			if(NT_NUMBER =! 0)
+				p.setNeighborhood(NT_NUMBER, NUM_PARTICLES, PARTICLE_INCLUDED);
 			swarm[i] = p; 
 			
 		
@@ -57,16 +60,71 @@ public class Swarm {
 		for(int j = 0; j < NUM_ITERATIONS; j++){
 			for(int i = 0; i < NUM_PARTICLES; i++){
 				Particle p = swarm[i];
-				p.updateVelocity(NIS_NUMBER, PARTICLE_INCLUDED);
+				//p.updateVelocity(NIS_NUMBER, PARTICLE_INCLUDED);
 				p.updatePosition();
 				p.valueForPosition(FUNCTION_NUMBER);
-				p.updateBests();
-						
-		
+				
+				
+					
 			}
+			System.out.println();
 		}
 	
 	
+	}
+	
+	private void updateBests(Particle p){
+	
+		if(p.pPosVal < p.pBest){
+			p.pBest = p.pPosVal;
+			p.pBestLocation = p.position;
+			
+			if(PARTICLE_INCLUDED){
+				if(p.pPosVal < p.nBest){
+			
+					p.nBest = p.pPosVal;
+					p.nBestLocation = p.position;
+			
+				}
+			}
+			//if gBest NT is the whole swarm
+			if(NT_NUMBER == 0){
+				for(int k = 0; i < swarm.length; i++){
+					if(k != p.particleID){			
+						Particle neighbor = swarm[k];
+						if(neighbor.pBest < p.nBest){
+							p.nBest = neighbor.pBest;
+							p.nBestLocation = neighbor.pBestLocation;
+				
+						}		
+					}					
+				}
+			
+			
+			}
+			else{//check neighborhood for best
+				for(int k = 0; i < p.neighborhood.length; i++){
+					int l = p.neighborhood[k];
+				
+					Particle neighbor = swarm[l];
+					if(neighbor.pBest < p.nBest){
+						p.nBest = neighbor.pBest;
+						p.nBestLocation = neighbor.pBestLocation;
+				
+					}					
+				}
+			
+				
+			}	
+			//update global best if there is a new one
+			if(p.pPosVal < gBest){
+				gBest = p.pPosVal;
+				gBestLocation = p.position;
+		
+			}	
+		}	
+	
+		
 	}
 	
 	private static void checkArgs(String [] args){
