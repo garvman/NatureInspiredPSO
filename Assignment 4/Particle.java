@@ -77,12 +77,12 @@ public class Particle {
 	//update the position of the particle
 	public void updatePosition(){
 		//System.out.println("inside update pos" );
-		System.out.print("position: ");
+		//System.out.print("velocity: ");
 		for(int i = 0; i < position.length; i++){
 		
 			position[i] = position[i] + velocity[i];
 			
-			System.out.print(position[i] + ", ");
+			//System.out.print(velocity[i] + ", ");
 		}
 		
 	
@@ -109,7 +109,7 @@ public class Particle {
 			ret = evalRastrigin(0);		
 		}
 		
-		System.out.println(" Value: " + ret);
+		//System.out.println(" Value: " + ret);
 		pPosVal = ret;
 	}
 	

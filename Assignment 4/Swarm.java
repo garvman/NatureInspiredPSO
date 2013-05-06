@@ -54,7 +54,7 @@ public class Swarm {
 		Swarm swarm = new Swarm ();
 		swarm.initSwarm();
 		swarm.runSwarm();
-		
+		System.out.println("Done");
 		
 
 
@@ -98,7 +98,8 @@ public class Swarm {
 				
 					
 			}
-			System.out.println();
+			System.out.println("Best for iteration " + j + ": " + gBest);
+			//System.out.println();
 		}
 	
 	
@@ -109,13 +110,25 @@ public class Swarm {
 		if(p.pPosVal < p.pBest){
 			p.pBest = p.pPosVal;
 			p.pBestLocation = p.position;
+			//Useful for debugging to visualize progression of PSO
+			//System.out.println("ParticleID " + p.particleID);
+			//System.out.println("pBest value: " + p.pBest);
 			
+			/*
+			for(int i = 0; i < NUM_DIMENSIONS; i++){
+				System.out.print(p.position[i] + ", ");
+			}
+			*/
+			
+			//System.out.println();
+			//System.out.println();
 			if(PARTICLE_INCLUDED){
 				if(p.pPosVal < p.nBest){
 			
 					p.nBest = p.pPosVal;
 					p.nBestLocation = p.position;
-			
+					//System.out.println("nBest value: " + p.nBest);
+					//System.out.println();
 				}
 			}
 			//if gBest NT is the whole swarm
@@ -126,7 +139,7 @@ public class Swarm {
 						if(neighbor.pBest < p.nBest){
 							p.nBest = neighbor.pBest;
 							p.nBestLocation = neighbor.pBestLocation;
-				
+							
 						}		
 					}					
 				}
@@ -140,8 +153,7 @@ public class Swarm {
 					Particle neighbor = swarm[l];
 					if(neighbor.pBest < p.nBest){
 						p.nBest = neighbor.pBest;
-						p.nBestLocation = neighbor.pBestLocation;
-				
+						p.nBestLocation = neighbor.pBestLocation;				
 					}					
 				}
 			
@@ -149,6 +161,7 @@ public class Swarm {
 			}	
 			//update global best if there is a new one
 			if(p.pPosVal < gBest){
+				System.out.println("YES");
 				gBest = p.pPosVal;
 				gBestLocation = p.position;
 		
@@ -162,8 +175,16 @@ public class Swarm {
 	//a given particle
 	public void setNeighborhood(Particle p){
 		
+		//gbest topology
+		if (NT_NUMBER == G_BEST) {
+			p.neighborhood = new int[NUM_PARTICLES];
+			for(int i=0;i<NUM_PARTICLES;i++) {
+				p.neighborhood[i] = i;
+			}
+		}
+		
 		//lBest topology
-		if(NT_NUMBER == L_BEST){
+		else if(NT_NUMBER == L_BEST){
 			p.neighborhood = new int [2];
 			
 			if(p.particleID == 0){
@@ -380,21 +401,21 @@ public class Swarm {
 		//FIPS particle included
 		if (NIS_NUMBER == FIPS){
 			for(int i = 0; i < NUM_DIMENSIONS; i++){
-				p.velocity[i] = constrictionFactor*(phi1*velFIPS(p,i));
+				p.velocity[i] = constrictionFactor*(rand.nextDouble()*phi1*velFIPS(p,i));
 			}
 		}
 		//STD particle included
 		else if (NIS_NUMBER == STD && PARTICLE_INCLUDED){
 			for(int i = 0; i < NUM_DIMENSIONS; i++){
-				p.velocity[i] = constrictionFactor*(p.velocity[i] + phi1*(p.pBestLocation[i]-p.position[i]) +
-								phi2*(p.nBestLocation[i]-p.position[i]));
+				p.velocity[i] = (p.velocity[i] + rand.nextDouble()*phi1*(p.pBestLocation[i]
+				-p.position[i]) + rand.nextDouble()*phi2*(p.nBestLocation[i]-p.position[i]));
 			}
 		
 		}
 		//STD particle not included
 		else if (NIS_NUMBER == STD &! PARTICLE_INCLUDED){
 			for(int i = 0; i < NUM_DIMENSIONS; i++){
-				p.velocity[i] = constrictionFactor*(p.velocity[i] +	phi2*(p.nBestLocation[i]-p.position[i]));
+				p.velocity[i] = constrictionFactor*(p.velocity[i] +	rand.nextDouble()*phi2*(p.nBestLocation[i]-p.position[i]));
 			}
 		
 		}
@@ -410,7 +431,7 @@ public class Swarm {
 			Particle tmp; 
 			
 			for(int i = 0; i < p.neighborhood.length; i++){
-				tmp = swarm[i];
+				tmp = swarm[p.neighborhood[i]];
 				pVel += (tmp.pBestLocation[dimension] - tmp.position[dimension]);				
 			
 			}
@@ -420,7 +441,7 @@ public class Swarm {
 			Particle tmp; 
 			
 			for(int i = 0; i < p.neighborhood.length; i++){
-				tmp = swarm[i];
+				tmp = swarm[p.neighborhood[i]];
 				pVel += (tmp.pBestLocation[dimension] - tmp.position[dimension]);				
 			
 			}
@@ -449,12 +470,17 @@ public class Swarm {
 			NUM_PARTICLES = Integer.parseInt(args[3]);
 			NUM_ITERATIONS = Integer.parseInt(args[4]);
 			FUNCTION_NUMBER = Integer.parseInt(args[5]);
-			NUM_DIMENSIONS = Integer.parseInt(args[6]); 			
+			NUM_DIMENSIONS = Integer.parseInt(args[6]); 	
+			System.out.println("Function: " + FUNCTION_NUMBER);
+			System.out.println("Neighborhood: " + NT_NUMBER);
+			System.out.println("Neighborhood Influence: " + NIS_NUMBER);
 			
 			if(pInc == 1){
+				System.out.println("Particle included");
 				PARTICLE_INCLUDED = true;
 			}
 			else{
+				System.out.println("Particle not included");
 				PARTICLE_INCLUDED = false;
 			}
 			
