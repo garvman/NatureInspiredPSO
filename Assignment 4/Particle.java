@@ -19,15 +19,7 @@ public class Particle {
 	public final int ACKLEY_FUNCTION = 3;
 	public final int RASTRIGIN_FUNCTION = 4;
 	
-	//constant integer values for the neighborhood topologies
-	public final int G_BEST = 0;
-	public final int L_BEST = 1; //(AKA Ring)
-	public final int VON_NEUMANN = 2;
-	public final int RANDOM_NEIGHBORHOOD = 3;
 	
-	//constant integer values for the neighborhood influence schemes 
-	public final int FIPS = 0;
-	public final int STD = 1;
 	
 	int particleID;
 	double pPosVal; 
@@ -81,108 +73,6 @@ public class Particle {
 		}		
 			
 	}
-	
-	//depending on the neighborhood set the neighborhood for 
-	//a given particle
-	public void setNeighborhood(int NT_NUMBER, int NUM_PARTICLES, boolean PARTICLE_INCLUDED){
-		
-		if((NT_NUMBER == G_BEST) &! PARTICLE_INCLUDED){
-			
-		
-		}
-		else if((NT_NUMBER == G_BEST) && PARTICLE_INCLUDED){
-		
-			
-		
-		}
-		else if((NT_NUMBER == L_BEST) &! PARTICLE_INCLUDED){
-			neighborhood = new int [2];
-			
-			if(particleID == 0){
-				neighborhood[0] = NUM_PARTICLES-1;
-				neighborhood[1] = particleID+1;				
-			}
-			else if(particleID == NUM_PARTICLES-1){
-				neighborhood[0] = 0;
-				neighborhood[1] = particleID-1;				
-			}
-			else {
-				neighborhood[0] = particleID+1;
-				neighborhood[1] = particleID-1;
-				
-			}
-		}
-		else if((NT_NUMBER == L_BEST) && PARTICLE_INCLUDED){
-			neighborhood = new int [3];
-			neighborhood[0] = particleID;
-			
-			if(particleID == 0){
-				neighborhood[1] = NUM_PARTICLES-1;
-				neighborhood[2] = particleID+1;				
-			}
-			else if(particleID == NUM_PARTICLES-1){
-				neighborhood[1] = 0;
-				neighborhood[2] = particleID-1;				
-			}
-			else {
-				neighborhood[1] = particleID+1;
-				neighborhood[2] = particleID-1;
-				
-			}
-		}
-		else if((NT_NUMBER == VON_NEUMANN) &! PARTICLE_INCLUDED){
-		
-		
-		}
-		else if((NT_NUMBER == VON_NEUMANN) && PARTICLE_INCLUDED){
-		
-		
-		}
-		else if ((NT_NUMBER == RANDOM_NEIGHBORHOOD)&! PARTICLE_INCLUDED){
-			
-		
-		}
-		else if ((NT_NUMBER == RANDOM_NEIGHBORHOOD)&& PARTICLE_INCLUDED){
-			
-		
-		}
-	
-	
-	}
-	
-	
-	
-	
-	//depending on the global and local best values and neighborhood
-	public void updateVelocity(int NIS_NUMBER, boolean PARTICLE_INCLUDED){
-		
-		//update particle velocity depending on the influence strategy and the 
-		//whether the particle is included or not
-		
-		//FIPS particle included
-		if (NIS_NUMBER == 0 && PARTICLE_INCLUDED){
-		
-		}
-		//FIPS particle not included
-		else if (NIS_NUMBER == 0 &! PARTICLE_INCLUDED){
-		
-		
-		}
-		//STD particle included
-		else if (NIS_NUMBER == 1 && PARTICLE_INCLUDED){
-		
-		
-		}
-		//STD particle not included
-		else if (NIS_NUMBER == 1 &! PARTICLE_INCLUDED){
-		
-		
-		}
-	
-	
-	}
-	
-	
 	
 	//update the position of the particle
 	public void updatePosition(){
